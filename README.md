@@ -5,10 +5,7 @@
 <title>祥真一職人｜電池三項快檢系統</title>
 <style>
 *{box-sizing:border-box}
-html,body{
-  margin:0;
-  padding:0;
-}
+html,body{margin:0;padding:0}
 body{
   font-family:Arial,"Noto Sans TC",sans-serif;
   background:#f3f6fb;
@@ -159,6 +156,12 @@ button.calc-btn{
   color:#66788a;
   line-height:1.8;
 }
+.input-note{
+  margin-top:6px;
+  font-size:12px;
+  color:#7b8796;
+  line-height:1.75;
+}
 .result-title{
   font-size:16px;
   font-weight:800;
@@ -239,22 +242,10 @@ button.calc-btn{
   font-weight:800;
   margin-bottom:10px;
 }
-.score-green{
-  background:#e8f8ee;
-  color:#1f8f4d;
-}
-.score-yellow{
-  background:#fff8df;
-  color:#b88300;
-}
-.score-orange{
-  background:#fff0e4;
-  color:#d96a00;
-}
-.score-red{
-  background:#ffe9e9;
-  color:#c93838;
-}
+.score-green{background:#e8f8ee;color:#1f8f4d}
+.score-yellow{background:#fff8df;color:#b88300}
+.score-orange{background:#fff0e4;color:#d96a00}
+.score-red{background:#ffe9e9;color:#c93838}
 .footer-copyright{
   text-align:center;
   font-size:12px;
@@ -290,6 +281,8 @@ button.calc-btn{
 
     <!-- 回程快測 -->
     <div id="returnBox">
+      <div class="small-note">📌 小提醒：本系統所需電壓數據，可直接從車輛儀表板查看</div>
+
       <label>電池類型</label>
       <select id="rt_batteryType" onchange="rt_updateConfig()">
         <option value="lithium">鋰電池</option>
@@ -322,6 +315,7 @@ button.calc-btn{
 
       <label>目前靜置電壓</label>
       <input id="rt_nowVoltage" type="number" step="0.1" placeholder="例如 50、63、71">
+      <div class="input-note">請輸入車輛目前靜止、未加速時的電壓值（可查看儀表板電壓）</div>
 
       <div class="inline-grid">
         <div>
@@ -352,9 +346,11 @@ button.calc-btn{
     <div id="healthBox" class="hidden">
       <label>理論滿電續航（km）</label>
       <input id="ht_idealRange" type="number" step="1" placeholder="例如 40">
+      <div class="input-note">請輸入電池新裝時，或原本正常狀態下，充滿電大約可行駛的公里數。若不確定，可先使用「續航距離評估系統」估算後，再回來填入。</div>
 
       <label>實際目前滿電續航（km）</label>
       <input id="ht_actualRange" type="number" step="1" placeholder="例如 15">
+      <div class="input-note">請輸入目前電池充滿電後，實際大約可行駛的公里數。建議以最近實際騎乘狀況為主。</div>
 
       <button class="calc-btn" onclick="ht_calculate()">開始診斷</button>
 
@@ -375,9 +371,11 @@ button.calc-btn{
 
       <label>靜置電壓</label>
       <input id="sg_restVoltage" type="number" step="0.1" placeholder="例如 52、71">
+      <div class="input-note">請輸入車輛靜止、未催油門時的電壓值（可查看儀表板電壓）</div>
 
       <label>加速最低電壓</label>
       <input id="sg_loadVoltage" type="number" step="0.1" placeholder="例如 48、63">
+      <div class="input-note">請輸入加速或催油門當下，電壓下降到的最低值（可查看儀表板變化）</div>
 
       <button class="calc-btn" onclick="sg_calculate()">開始檢測</button>
 
@@ -391,22 +389,22 @@ button.calc-btn{
 
 <script>
 function switchTool(type){
-  document.getElementById("returnBox").classList.toggle("hidden", type!=="return");
-  document.getElementById("healthBox").classList.toggle("hidden", type!=="health");
-  document.getElementById("sagBox").classList.toggle("hidden", type!=="sag");
+  document.getElementById("returnBox").classList.toggle("hidden", type !== "return");
+  document.getElementById("healthBox").classList.toggle("hidden", type !== "health");
+  document.getElementById("sagBox").classList.toggle("hidden", type !== "sag");
 
-  document.getElementById("tabReturn").classList.toggle("active", type==="return");
-  document.getElementById("tabHealth").classList.toggle("active", type==="health");
-  document.getElementById("tabSag").classList.toggle("active", type==="sag");
+  document.getElementById("tabReturn").classList.toggle("active", type === "return");
+  document.getElementById("tabHealth").classList.toggle("active", type === "health");
+  document.getElementById("tabSag").classList.toggle("active", type === "sag");
 }
 
 function updateSystemTime(){
   const now = new Date();
   const y = now.getFullYear();
-  const m = String(now.getMonth()+1).padStart(2,'0');
-  const d = String(now.getDate()).padStart(2,'0');
+  const m = String(now.getMonth()+1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
   let h = now.getHours();
-  const min = String(now.getMinutes()).padStart(2,'0');
+  const min = String(now.getMinutes()).padStart(2, "0");
   let p = "上午";
 
   if(h >= 12){
@@ -416,16 +414,16 @@ function updateSystemTime(){
   if(h === 0) h = 12;
 
   document.getElementById("systemTime").innerText =
-    `系統時間：${y}/${m}/${d} ${p} ${h}:${min}`;
+    "系統時間：" + y + "/" + m + "/" + d + " " + p + " " + h + ":" + min;
 }
 
 function getNowTime(){
   const now = new Date();
   const y = now.getFullYear();
-  const m = String(now.getMonth()+1).padStart(2,'0');
-  const d = String(now.getDate()).padStart(2,'0');
+  const m = String(now.getMonth()+1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
   let h = now.getHours();
-  const min = String(now.getMinutes()).padStart(2,'0');
+  const min = String(now.getMinutes()).padStart(2, "0");
   let p = "上午";
 
   if(h >= 12){
@@ -434,12 +432,12 @@ function getNowTime(){
   }
   if(h === 0) h = 12;
 
-  return `${y}/${m}/${d} ${p} ${h}:${min}`;
+  return y + "/" + m + "/" + d + " " + p + " " + h + ":" + min;
 }
 
 function addUseCount(){
   let count = localStorage.getItem("battery_count");
-  count = count ? parseInt(count,10) : 0;
+  count = count ? parseInt(count, 10) : 0;
   count++;
   localStorage.setItem("battery_count", count);
   updateUseCountDisplay();
@@ -447,9 +445,8 @@ function addUseCount(){
 
 function updateUseCountDisplay(){
   let count = localStorage.getItem("battery_count");
-  count = count ? parseInt(count,10) : 0;
-  document.getElementById("viewCount").innerText =
-    `📊 本系統已完成 ${count} 次檢測`;
+  count = count ? parseInt(count, 10) : 0;
+  document.getElementById("viewCount").innerText = "📊 本系統已完成 " + count + " 次檢測";
 }
 
 function getActionButtons(){
@@ -459,30 +456,19 @@ function getActionButtons(){
         若您對目前車況或電池表現有疑慮，歡迎透過 LINE 詢問，也可直接來電。<br>
         📩 提供此檢測結果截圖，可協助您更快判斷與回覆。
       </div>
-      <a class="line-btn" href="https://line.me/R/ti/p/~wujiau" target="_blank">
-        💬 LINE快速詢問
-      </a>
-      <a class="call-btn" href="tel:0927372875">
-        📞 直接來電 0927-372-875
-      </a>
+      <a class="line-btn" href="https://line.me/R/ti/p/~wujiau" target="_blank">💬 LINE快速詢問</a>
+      <a class="call-btn" href="tel:0927372875">📞 直接來電 0927-372-875</a>
     </div>
   `;
 }
 
 function getScoreBadge(percent){
-  if(percent >= 70){
-    return "<div class='score-badge score-green'>🟢 狀態良好</div>";
-  }
-  if(percent >= 50){
-    return "<div class='score-badge score-yellow'>🟡 建議留意</div>";
-  }
-  if(percent >= 35){
-    return "<div class='score-badge score-orange'>🟠 建議檢測</div>";
-  }
+  if(percent >= 70) return "<div class='score-badge score-green'>🟢 狀態良好</div>";
+  if(percent >= 50) return "<div class='score-badge score-yellow'>🟡 建議留意</div>";
+  if(percent >= 35) return "<div class='score-badge score-orange'>🟠 建議檢測</div>";
   return "<div class='score-badge score-red'>🔴 建議處理</div>";
 }
 
-/* 核心資料 */
 const li_lithiumData = {
   58:{full:58.0,minInput:43.0},
   60:{full:71.0,minInput:54.0},
@@ -503,36 +489,36 @@ const pb_voltageLimit = {
   72:{min:66,max:78}
 };
 
-function li_getSOC(voltage,type){
+function li_getSOC(voltage, type){
   const table = li_socCurve[type];
   for(let i=0;i<table.length-1;i++){
     const v1 = table[i][0], s1 = table[i][1];
     const v2 = table[i+1][0], s2 = table[i+1][1];
-    if(voltage>=v1 && voltage<=v2){
-      const ratio = (voltage-v1)/(v2-v1);
-      return s1 + (s2-s1)*ratio;
+    if(voltage >= v1 && voltage <= v2){
+      const ratio = (voltage - v1) / (v2 - v1);
+      return s1 + (s2 - s1) * ratio;
     }
   }
-  if(voltage<table[0][0]) return 0;
-  if(voltage>table[table.length-1][0]) return 100;
+  if(voltage < table[0][0]) return 0;
+  if(voltage > table[table.length-1][0]) return 100;
   return 0;
 }
 
-function rt_interpolate(v,table){
+function rt_interpolate(v, table){
   for(let i=0;i<table.length-1;i++){
-    const v1=table[i][0], s1=table[i][1];
-    const v2=table[i+1][0], s2=table[i+1][1];
-    if(v>=v1 && v<=v2){
-      const r=(v-v1)/(v2-v1);
-      return s1+(s2-s1)*r;
+    const v1 = table[i][0], s1 = table[i][1];
+    const v2 = table[i+1][0], s2 = table[i+1][1];
+    if(v >= v1 && v <= v2){
+      const r = (v - v1) / (v2 - v1);
+      return s1 + (s2 - s1) * r;
     }
   }
-  if(v<table[0][0]) return 0;
-  if(v>table[table.length-1][0]) return 100;
+  if(v < table[0][0]) return 0;
+  if(v > table[table.length-1][0]) return 100;
   return 0;
 }
 
-function rt_getLeadSOC(voltage,type){
+function rt_getLeadSOC(voltage, type){
   const tableMap = {
     48:[[42,0],[44,20],[46,40],[48,60],[50,80],[52,100]],
     60:[[53,0],[56,20],[58,40],[60,60],[62,80],[65,100]],
@@ -563,11 +549,11 @@ function rt_updateConfig(){
 
   if(type === "lithium"){
     [
-      {value:58, text:"48V"},
-      {value:60, text:"60V"},
-      {value:72, text:"72V"},
-      {value:76, text:"76V"}
-    ].forEach(item=>{
+      {value:58,text:"48V"},
+      {value:60,text:"60V"},
+      {value:72,text:"72V"},
+      {value:76,text:"76V"}
+    ].forEach(function(item){
       const opt = document.createElement("option");
       opt.value = item.value;
       opt.text = item.text;
@@ -575,13 +561,13 @@ function rt_updateConfig(){
     });
 
     [
-      {value:1.00, text:"全新"},
-      {value:0.97, text:"使用3個月"},
-      {value:0.93, text:"使用6個月"},
-      {value:0.88, text:"使用約1年"},
-      {value:0.82, text:"使用1年6個月"},
-      {value:0.75, text:"使用2年以上"}
-    ].forEach(item=>{
+      {value:1.00,text:"全新"},
+      {value:0.97,text:"使用3個月"},
+      {value:0.93,text:"使用6個月"},
+      {value:0.88,text:"使用約1年"},
+      {value:0.82,text:"使用1年6個月"},
+      {value:0.75,text:"使用2年以上"}
+    ].forEach(function(item){
       const opt = document.createElement("option");
       opt.value = item.value;
       opt.text = item.text;
@@ -589,10 +575,10 @@ function rt_updateConfig(){
     });
   }else{
     [
-      {value:48, text:"48V"},
-      {value:60, text:"60V"},
-      {value:72, text:"72V"}
-    ].forEach(item=>{
+      {value:48,text:"48V"},
+      {value:60,text:"60V"},
+      {value:72,text:"72V"}
+    ].forEach(function(item){
       const opt = document.createElement("option");
       opt.value = item.value;
       opt.text = item.text;
@@ -600,13 +586,13 @@ function rt_updateConfig(){
     });
 
     [
-      {value:1.00, text:"全新"},
-      {value:0.93, text:"使用3個月"},
-      {value:0.88, text:"使用6個月"},
-      {value:0.80, text:"使用約1年"},
-      {value:0.72, text:"使用1年6個月"},
-      {value:0.65, text:"使用2年以上"}
-    ].forEach(item=>{
+      {value:1.00,text:"全新"},
+      {value:0.93,text:"使用3個月"},
+      {value:0.88,text:"使用6個月"},
+      {value:0.80,text:"使用約1年"},
+      {value:0.72,text:"使用1年6個月"},
+      {value:0.65,text:"使用2年以上"}
+    ].forEach(function(item){
       const opt = document.createElement("option");
       opt.value = item.value;
       opt.text = item.text;
@@ -624,7 +610,6 @@ function rt_updateCapacityOptions(){
   capacitySelect.innerHTML = "";
 
   let capacities = [];
-
   if(type === "lithium"){
     if(voltage === 58) capacities = [12,16,20,30,40,50];
     if(voltage === 60) capacities = [20,30,40,50];
@@ -636,7 +621,7 @@ function rt_updateCapacityOptions(){
     if(voltage === 72) capacities = [20,24,30];
   }
 
-  capacities.forEach(c=>{
+  capacities.forEach(function(c){
     const opt = document.createElement("option");
     opt.value = c;
     opt.text = c + "Ah";
@@ -646,31 +631,15 @@ function rt_updateCapacityOptions(){
 
 function rt_getRideAdvice(type, soc, remainRange){
   if(soc <= 10 || remainRange <= 3){
-    return {
-      level:"🔴 電量偏低",
-      text:"目前電量已接近低區間，續航風險較高，建議立即補電或停止遠行。",
-      className:"result-red"
-    };
+    return {level:"🔴 電量偏低", text:"目前電量已接近低區間，續航風險較高，建議立即補電或停止遠行。", className:"result-red"};
   }
   if(soc <= 25 || remainRange <= 8){
-    return {
-      level:"🟠 電量偏低",
-      text:"目前電量偏低，建議避免遠距離騎乘，並優先安排返程或補電。",
-      className:"result-orange"
-    };
+    return {level:"🟠 電量偏低", text:"目前電量偏低，建議避免遠距離騎乘，並優先安排返程或補電。", className:"result-orange"};
   }
   if(soc < 70){
-    return {
-      level:"🟡 電量中等",
-      text:"目前電量處於中等區間，仍可騎乘，但建議留意回程電量與使用距離。",
-      className:"result-yellow"
-    };
+    return {level:"🟡 電量中等", text:"目前電量處於中等區間，仍可騎乘，但建議留意回程電量與使用距離。", className:"result-yellow"};
   }
-  return {
-    level:"🟢 電量充足",
-    text:"目前電量充足，可安心騎乘日常使用，建議仍預留回程電量。",
-    className:"result-green"
-  };
+  return {level:"🟢 電量充足", text:"目前電量充足，可安心騎乘日常使用，建議仍預留回程電量。", className:"result-green"};
 }
 
 function rt_getRoadText(value){
@@ -700,28 +669,28 @@ function rt_getDestinationJudge(remainRange, needDistance){
   const ratio = remainRange / safeNeedDistance;
 
   if(ratio >= 1.15){
-    return { title:"🟢 可安全到達", text:"續航餘量較充足，可安心前往目的地。", diff:diff };
+    return {title:"🟢 可安全到達", text:"續航餘量較充足，可安心前往目的地。", diff:diff};
   }
   if(ratio >= 1.0){
-    return { title:"🟡 可到但需保留電量", text:"理論上可完成行程，但建議避免繞路、重載或激烈騎乘。", diff:diff };
+    return {title:"🟡 可到但需保留電量", text:"理論上可完成行程，但建議避免繞路、重載或激烈騎乘。", diff:diff};
   }
   if(ratio >= 0.85){
-    return { title:"🟠 接近續航極限", text:"目前距離已接近安全極限，建議先補電或調整行程安排。", diff:diff };
+    return {title:"🟠 接近續航極限", text:"目前距離已接近安全極限，建議先補電或調整行程安排。", diff:diff};
   }
-  return { title:"🔴 不建議前往", text:"以目前條件來看續航不足，途中可能出現電量不足或無力情況。", diff:diff };
+  return {title:"🔴 不建議前往", text:"以目前條件來看續航不足，途中可能出現電量不足或無力情況。", diff:diff};
 }
 
 function rt_calculate(){
   rt_clearError();
 
   const type = document.getElementById("rt_batteryType").value;
-  const voltageType = parseInt(document.getElementById("rt_voltage").value);
+  const voltageType = parseInt(document.getElementById("rt_voltage").value, 10);
   const cap = parseFloat(document.getElementById("rt_capacity").value);
   const ageFactor = parseFloat(document.getElementById("rt_age").value);
-  const roadSelect = document.getElementById("rt_road");
-  const weightSelect = document.getElementById("rt_weight");
-  const roadFactor = parseFloat(roadSelect.value);
-  const weightFactor = parseFloat(weightSelect.value);
+  const roadFactor = parseFloat(document.getElementById("rt_road").value);
+  const weightFactor = parseFloat(document.getElementById("rt_weight").value);
+  const roadText = rt_getRoadText(document.getElementById("rt_road").value);
+  const weightText = rt_getWeightText(document.getElementById("rt_weight").value);
   const voltage = parseFloat(document.getElementById("rt_nowVoltage").value);
   const targetDistanceText = document.getElementById("rt_targetDistance").value.trim();
   const tripMode = document.getElementById("rt_tripMode").value;
@@ -743,7 +712,7 @@ function rt_calculate(){
   let minV = 0;
   let maxV = 0;
 
-  if(type==="lithium"){
+  if(type === "lithium"){
     soc = li_getSOC(voltage, voltageType);
     minV = li_lithiumData[voltageType].minInput;
     maxV = li_lithiumData[voltageType].full;
@@ -761,18 +730,16 @@ function rt_calculate(){
   addUseCount();
 
   const rawWh = voltageType * cap;
-  const efficiency = type==="lithium" ? 0.90 : 0.78;
+  const efficiency = type === "lithium" ? 0.90 : 0.78;
   const usableWh = rawWh * efficiency * (soc/100) * ageFactor * roadFactor * weightFactor;
 
   let consumption = 25;
-  if(voltageType===48 || voltageType===58) consumption = 22;
-  if(voltageType===60) consumption = 25;
-  if(voltageType===72 || voltageType===76) consumption = 30;
+  if(voltageType === 48 || voltageType === 58) consumption = 22;
+  if(voltageType === 60) consumption = 25;
+  if(voltageType === 72 || voltageType === 76) consumption = 30;
 
   const remainRange = usableWh / consumption;
   const advice = rt_getRideAdvice(type, soc, remainRange);
-  const roadText = rt_getRoadText(roadSelect.value);
-  const weightText = rt_getWeightText(weightSelect.value);
 
   const resultBox = document.getElementById("rt_result");
   resultBox.className = "result " + advice.className;
@@ -793,11 +760,8 @@ function rt_calculate(){
     const needDistance = tripMode === "round" ? targetDistance * 2 : targetDistance;
     const tripText = tripMode === "round" ? "來回" : "單程";
     const destJudge = rt_getDestinationJudge(remainRange, needDistance);
-
     const safeDistance = needDistance * 1.3;
-    const diffText = destJudge.diff >= 0
-      ? "剩餘 " + destJudge.diff.toFixed(1) + " km"
-      : "不足 " + Math.abs(destJudge.diff).toFixed(1) + " km";
+    const diffText = destJudge.diff >= 0 ? "剩餘 " + destJudge.diff.toFixed(1) + " km" : "不足 " + Math.abs(destJudge.diff).toFixed(1) + " km";
 
     let extraTip = "";
     if(tripMode === "round" && remainRange >= targetDistance && remainRange < safeDistance){
@@ -855,31 +819,15 @@ function ht_showError(message){
 
 function ht_getHealthLevel(health){
   if(health >= 85){
-    return {
-      badge:"🟢 健康良好",
-      advice:"目前續航表現良好，電池狀況正常。",
-      className:"result-green"
-    };
+    return {badge:"🟢 健康良好", advice:"目前續航表現良好，電池狀況正常。", className:"result-green"};
   }
   if(health >= 70){
-    return {
-      badge:"🟡 已有些微衰退",
-      advice:"電池已有些微衰退，建議持續觀察使用狀況。",
-      className:"result-yellow"
-    };
+    return {badge:"🟡 已有些微衰退", advice:"電池已有些微衰退，建議持續觀察使用狀況。", className:"result-yellow"};
   }
   if(health > 50){
-    return {
-      badge:"🟠 明顯老化",
-      advice:"電池效能已明顯下降，建議安排檢測或評估更換。",
-      className:"result-orange"
-    };
+    return {badge:"🟠 明顯老化", advice:"電池效能已明顯下降，建議安排檢測或評估更換。", className:"result-orange"};
   }
-  return {
-    badge:"🔴 建議更換",
-    advice:"電池衰退幅度已高，建議儘快檢測或評估更換，以避免續航突然不足。",
-    className:"result-red"
-  };
+  return {badge:"🔴 建議更換", advice:"電池衰退幅度已高，建議儘快檢測或評估更換，以避免續航突然不足。", className:"result-red"};
 }
 
 function ht_calculate(){
@@ -915,7 +863,7 @@ function ht_calculate(){
     getScoreBadge(health) +
     "<div class='result-title'>🔧 電池健康度診斷結果</div>" +
     "理論滿電續航：<span class='info-strong'>" + ideal.toFixed(0) + " km</span><br>" +
-    "實際目前續航：<span class='info-strong'>" + actual.toFixed(0) + " km</span><br>" +
+    "實際目前滿電續航：<span class='info-strong'>" + actual.toFixed(0) + " km</span><br>" +
     "電池健康度：<span class='info-strong'>" + health.toFixed(1) + "%</span><br>" +
     "<div class='bar'><div class='bar-fill' id='ht_healthBar'></div></div>" +
     "健康判定：<span class='info-strong'>" + level.badge + "</span><br>" +
@@ -953,34 +901,20 @@ function sg_updateVoltageOptions(){
   const voltageSelect = document.getElementById("sg_voltage");
   voltageSelect.innerHTML = "";
 
-  if(type==="lithium"){
-    [
-      {value:58,text:"48V"},
-      {value:60,text:"60V"},
-      {value:72,text:"72V"},
-      {value:76,text:"76V"}
-    ].forEach(item=>{
-      const opt = document.createElement("option");
-      opt.value = item.value;
-      opt.text = item.text;
-      voltageSelect.appendChild(opt);
-    });
-  }else{
-    [
-      {value:48,text:"48V"},
-      {value:60,text:"60V"},
-      {value:72,text:"72V"}
-    ].forEach(item=>{
-      const opt = document.createElement("option");
-      opt.value = item.value;
-      opt.text = item.text;
-      voltageSelect.appendChild(opt);
-    });
-  }
+  const options = type === "lithium"
+    ? [{value:58,text:"48V"},{value:60,text:"60V"},{value:72,text:"72V"},{value:76,text:"76V"}]
+    : [{value:48,text:"48V"},{value:60,text:"60V"},{value:72,text:"72V"}];
+
+  options.forEach(function(item){
+    const opt = document.createElement("option");
+    opt.value = item.value;
+    opt.text = item.text;
+    voltageSelect.appendChild(opt);
+  });
 }
 
 function sg_getResult(type, sag){
-  if(type==="lithium"){
+  if(type === "lithium"){
     if(sag <= 3){
       return {
         level:"🟢 正常",
@@ -1011,45 +945,45 @@ function sg_getResult(type, sag){
       className:"result-red",
       detail:"可能原因：<br>・電池內阻明顯升高<br>・電芯老化嚴重<br>・負載下輸出能力不足<br><br>⚠ 若近期有爬坡無力或起步頓挫感，建議盡快安排檢測。"
     };
-  }else{
-    if(sag <= 4){
-      return {
-        level:"🟢 正常",
-        text:"負載掉壓屬正常範圍，電池輸出尚可。",
-        className:"result-green",
-        detail:"目前負載表現正常，暫無明顯異常掉壓現象，可持續觀察日常騎乘狀況。"
-      };
-    }
-    if(sag <= 7){
-      return {
-        level:"🟡 稍大",
-        text:"掉壓略大，鉛酸電池可再持續觀察後續續航與爬坡表現。",
-        className:"result-yellow",
-        detail:"可能原因：<br>・電池內阻開始上升<br>・容量衰退初期<br>・負載表現略降<br><br>⚠ 若近期有爬坡無力或起步頓挫感，建議優先檢測電池內阻。"
-      };
-    }
-    if(sag <= 10){
-      return {
-        level:"🟠 偏大",
-        text:"掉壓偏大，可能已有老化或負載表現不佳情況。",
-        className:"result-orange",
-        detail:"可能原因：<br>・電池內阻上升<br>・容量衰退<br>・負載下輸出能力下降<br><br>⚠ 若近期有爬坡無力或起步頓挫感，建議優先檢測電池內阻。"
-      };
-    }
-    return {
-      level:"🔴 異常",
-      text:"掉壓異常偏大，鉛酸電池在負載下可能明顯虛弱，建議安排檢測或評估更換。",
-      className:"result-red",
-      detail:"可能原因：<br>・電池內阻明顯升高<br>・電池老化嚴重<br>・負載能力不足<br><br>⚠ 若近期有爬坡無力或起步頓挫感，建議盡快安排檢測。"
-      };
   }
+
+  if(sag <= 4){
+    return {
+      level:"🟢 正常",
+      text:"負載掉壓屬正常範圍，電池輸出尚可。",
+      className:"result-green",
+      detail:"目前負載表現正常，暫無明顯異常掉壓現象，可持續觀察日常騎乘狀況。"
+    };
+  }
+  if(sag <= 7){
+    return {
+      level:"🟡 稍大",
+      text:"掉壓略大，鉛酸電池可再持續觀察後續續航與爬坡表現。",
+      className:"result-yellow",
+      detail:"可能原因：<br>・電池內阻開始上升<br>・容量衰退初期<br>・負載表現略降<br><br>⚠ 若近期有爬坡無力或起步頓挫感，建議優先檢測電池內阻。"
+    };
+  }
+  if(sag <= 10){
+    return {
+      level:"🟠 偏大",
+      text:"掉壓偏大，可能已有老化或負載表現不佳情況。",
+      className:"result-orange",
+      detail:"可能原因：<br>・電池內阻上升<br>・容量衰退<br>・負載下輸出能力下降<br><br>⚠ 若近期有爬坡無力或起步頓挫感，建議優先檢測電池內阻。"
+    };
+  }
+  return {
+    level:"🔴 異常",
+    text:"掉壓異常偏大，鉛酸電池在負載下可能明顯虛弱，建議安排檢測或評估更換。",
+    className:"result-red",
+    detail:"可能原因：<br>・電池內阻明顯升高<br>・電池老化嚴重<br>・負載能力不足<br><br>⚠ 若近期有爬坡無力或起步頓挫感，建議盡快安排檢測。"
+  };
 }
 
 function sg_calculate(){
   sg_clearError();
 
   const type = document.getElementById("sg_batteryType").value;
-  const voltageType = parseInt(document.getElementById("sg_voltage").value);
+  const voltageType = parseInt(document.getElementById("sg_voltage").value, 10);
   const restVoltage = parseFloat(document.getElementById("sg_restVoltage").value);
   const loadVoltage = parseFloat(document.getElementById("sg_loadVoltage").value);
 
@@ -1064,8 +998,7 @@ function sg_calculate(){
 
   let minV = 0;
   let maxV = 0;
-
-  if(type==="lithium"){
+  if(type === "lithium"){
     minV = li_lithiumData[voltageType].minInput;
     maxV = li_lithiumData[voltageType].full;
   }else{
@@ -1082,14 +1015,11 @@ function sg_calculate(){
 
   const sag = restVoltage - loadVoltage;
   const result = sg_getResult(type, sag);
-
   const resultBox = document.getElementById("sg_result");
   resultBox.className = "result " + result.className;
   resultBox.classList.remove("hidden");
 
-  const scoreValue = type==="lithium"
-    ? Math.max(0, 100 - sag * 10)
-    : Math.max(0, 100 - sag * 12);
+  const scoreValue = type === "lithium" ? Math.max(0, 100 - sag * 10) : Math.max(0, 100 - sag * 12);
 
   resultBox.innerHTML =
     "<div class='test-time'>檢測時間：" + getNowTime() + "</div>" +
@@ -1115,7 +1045,7 @@ window.onload = function(){
   switchTool("return");
   updateSystemTime();
   updateUseCountDisplay();
-  setInterval(updateSystemTime,60000);
+  setInterval(updateSystemTime, 60000);
 };
 </script>
 </body>

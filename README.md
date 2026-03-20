@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -197,6 +198,24 @@ button.calc-btn{
   font-size:13px;
   line-height:1.8;
 }
+.tip-box{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#eef5ff;
+  border-left:5px solid #7aa6ef;
+}
+.tip-title{
+  font-size:13px;
+  font-weight:800;
+  color:#1d5fba;
+  margin-bottom:4px;
+}
+.tip-text{
+  font-size:13px;
+  color:#5b6b7a;
+  line-height:1.8;
+}
 .action-box{
   margin-top:16px;
 }
@@ -282,6 +301,15 @@ button.calc-btn{
     <!-- 回程快測 -->
     <div id="returnBox">
       <div class="small-note">📌 小提醒：本系統所需電壓數據，可直接從車輛儀表板查看</div>
+
+      <div class="tip-box">
+        <div class="tip-title">📘 測試提醒</div>
+        <div class="tip-text">
+          本系統以一般騎乘狀況作為估算參考，建議以平均速度、正常騎乘方式看待結果。<br>
+          若車輛全負載、長時間全油門、起步全油門、巡航全油門、重載或爬坡，
+          實際續航與電壓表現可能會明顯下降，數據也可能產生落差。
+        </div>
+      </div>
 
       <label>電池類型</label>
       <select id="rt_batteryType" onchange="rt_updateConfig()">
@@ -672,7 +700,7 @@ function rt_getDestinationJudge(remainRange, needDistance){
     return {title:"🟢 可安全到達", text:"續航餘量較充足，可安心前往目的地。", diff:diff};
   }
   if(ratio >= 1.0){
-    return {title:"🟡 可到但需保留電量", text:"理論上可完成行程，但建議避免繞路、重載或激烈騎乘。", diff:diff};
+    return {title:"🟡 可以到達，但回程要預留電量", text:"理論上可完成行程，但建議避免繞路、重載或激烈騎乘。", diff:diff};
   }
   if(ratio >= 0.85){
     return {title:"🟠 接近續航極限", text:"目前距離已接近安全極限，建議先補電或調整行程安排。", diff:diff};
@@ -773,7 +801,7 @@ function rt_calculate(){
       "輸入目的地距離：<span class='info-strong'>" + targetDistance.toFixed(1) + " km</span><br>" +
       "行程模式：<span class='info-strong'>" + tripText + "</span><br>" +
       "本次需求距離：<span class='info-strong'>" + needDistance.toFixed(1) + " km</span><br>" +
-      "安全建議距離：<span class='info-strong'>" + safeDistance.toFixed(1) + " km</span><br>" +
+      "建議至少需要：<span class='info-strong'>" + safeDistance.toFixed(1) + " km（含安全預留）</span><br>" +
       "判斷結果：<span class='info-strong'>" + destJudge.title + "</span><br>" +
       "續航差額：<span class='info-strong'>" + diffText + "</span><br>" +
       "目的地建議：" + destJudge.text +
